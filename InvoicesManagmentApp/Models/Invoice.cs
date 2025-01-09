@@ -12,10 +12,7 @@ namespace InvoicesManagmentApp.Models
         public DateOnly? DueDate { get; set; }
 
         //For service details
-        public string Service { get; set; } = "";
-        [Precision(16,2)]
-        public decimal UnitPrice { get; set; }
-        public int Quantity { get; set; }
+        public List<InvoiceItem> InvoiceItems { get; set; } = new();
 
         //For client details
         public string ClientName { get; set; } = "";

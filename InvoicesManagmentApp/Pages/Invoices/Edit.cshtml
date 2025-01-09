@@ -1,7 +1,10 @@
 ﻿@page
 @model InvoicesManagmentApp.Pages.Invoices.EditModel
 @{
+    var errorMessage = TempData["ErrorMessage"]?.ToString();
 }
+
+
 <h2 class="text-center mb-3">Edit Invoice</h2>
 
 
@@ -9,6 +12,13 @@
 {
     <div class="alert alert-success alert-dismissible fade show" role="alert">
         <strong>@Model.successMessage</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+else if (errorMessage != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>@errorMessage</strong>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 }
@@ -122,30 +132,54 @@
         </div>
         <div class="card-body">
 
-            <div class="row g-2">
-                <div class="col-lg-6">
-                    <label class="form-label">Service</label>
-                    <input class="form-control" asp-for="InvoiceDto.Service">
-                    <span asp-validation-for="InvoiceDto.Service" class="text-danger"></span>
-                </div>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addServiceModal">
+                Add Service
+            </button>
 
-                <div class="col-lg-2 col-sm-4">
-                    <label class="form-label">Quantity</label>
-                    <input class="form-control" asp-for="InvoiceDto.Quantity" id="quatityInput" oninput="updateTotalPrice()">
-                    <span asp-validation-for="InvoiceDto.Quantity" class="text-danger"></span>
-                </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Service</th>
+                        <th>Quantity</th>
+                        <th>Unit Price</th>
+                        <th>Total Price</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
 
-                <div class="col-lg-2 col-sm-4">
-                    <label class="form-label">Unit Price</label>
-                    <input class="form-control" asp-for="InvoiceDto.UnitPrice" id="unitPriceInput" oninput="updateTotalPrice()">
-                    <span asp-validation-for="InvoiceDto.UnitPrice" class="text-danger"></span>
-                </div>
+                <tbody>
 
-                <div class="col-lg-2 col-sm-4">
-                    <label class="form-label">Total Price</label>
-                    <input class="form-control" disabled id="totalPriceInput">
-                </div>
-            </div>
+                    @{
+                        decimal totalPrice = 0;
+                        foreach (var item in Model.Invoice.InvoiceItems)
+                        {
+                            totalPrice += item.Quantity * item.UnitPrice;
+
+                            <tr>
+                                <td>@item.Service</td>
+                                <td>@item.Quantity</td>
+                                <td>@(item.UnitPrice)$</td>
+                                <td>@(item.Quantity * item.UnitPrice)$</td>
+                                <td style="white-space:nowrap">
+                                    <a class="btn btn-danger btn-sm" asp-page="/Invoices/Edit" asp-page-handler="DeleteItem"
+                                       asp-route-invoiceId="@Model.Invoice.Id" asp-route-itemId="@item.Id">Delete</a>
+                                </td>
+                            </tr>
+                        }
+                    }
+
+                </tbody>
+                <tfoot class="table-group-divider">
+                    <tr class="table-light">
+                        <td></td>
+                        <td></td>
+                        <td class="text-end fw-bold">Total</td>
+                        <td>@(totalPrice)$</td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+
 
         </div>
     </div>
@@ -155,6 +189,60 @@
     <a class="btn btn-outline-primary" asp-page="/Invoices/Index" role="button">Cancel</a>
 
 </form>
+
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="addServiceModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5">Add Service</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+
+                <form method="post" asp-page-handler="CreateItem" asp-route-id="@Model.Invoice.Id">
+                    <div class="mb-3">
+                        <label class="form-label">Service</label>
+                        <input class="form-control" asp-for="InvoiceItemDto.Service">
+                        <span asp-validation-for="InvoiceItemDto.Service" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Quantity</label>
+                        <input class="form-control" asp-for="InvoiceItemDto.Quantity" id="quatityInput" oninput="updateTotalPrice()">
+                        <span asp-validation-for="InvoiceItemDto.Quantity" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Unit Price</label>
+                        <input class="form-control" asp-for="InvoiceItemDto.UnitPrice" id="unitPriceInput" oninput="updateTotalPrice()">
+                        <span asp-validation-for="InvoiceItemDto.UnitPrice" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Total Price</label>
+                        <input class="form-control" disabled id="totalPriceInput">
+                    </div>
+
+
+                    <button type="submit" class="btn btn-primary">Submit</button>
+
+                </form>
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 
 
 

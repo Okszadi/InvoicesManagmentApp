@@ -12,6 +12,9 @@ namespace InvoicesManagmentApp.Pages.Invoices
         [BindProperty]
         public InvoiceDto InvoiceDto { get; set; } = new();
 
+        [BindProperty]
+        public InvoiceItemDto InvoiceItemDto { get; set; } = new();
+
 
         public CreateModel(ApplicationDbContext context)
         {
@@ -30,6 +33,13 @@ namespace InvoicesManagmentApp.Pages.Invoices
                 return Page();
             }
 
+            var invoiceItem = new InvoiceItem
+            {
+                Service = InvoiceItemDto.Service,
+                UnitPrice = InvoiceItemDto.UnitPrice,
+                Quantity = InvoiceItemDto.Quantity,
+            };
+
             var invoice = new Invoice
             {
                 Number = InvoiceDto.Number,
@@ -37,20 +47,18 @@ namespace InvoicesManagmentApp.Pages.Invoices
                 IssueDate = InvoiceDto.IssueDate,
                 DueDate = InvoiceDto.DueDate,
 
-                Service = InvoiceDto.Service,
-                UnitPrice = InvoiceDto.UnitPrice,
-                Quantity = InvoiceDto.Quantity,
-
                 ClientName = InvoiceDto.ClientName,
                 Email = InvoiceDto.Email,
                 Phone = InvoiceDto.Phone,
                 Address = InvoiceDto.Address,
             };
 
+            invoice.InvoiceItems.Add(invoiceItem);
+
             context.Invoices.Add(invoice);
             context.SaveChanges();
 
-            return RedirectToPage("/Invoices/Index");
+            return RedirectToPage("/Invoices/Edit", new { id = invoice.Id });
         }
     }
 }

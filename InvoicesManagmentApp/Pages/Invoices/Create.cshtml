@@ -110,20 +110,20 @@
             <div class="row g-2">
                 <div class="col-lg-6">
                     <label class="form-label">Service</label>
-                    <input class="form-control" asp-for="InvoiceDto.Service">
-                    <span asp-validation-for="InvoiceDto.Service" class="text-danger"></span>
+                    <input class="form-control" asp-for="InvoiceItemDto.Service">
+                    <span asp-validation-for="InvoiceItemDto.Service" class="text-danger"></span>
                 </div>
 
                 <div class="col-lg-2 col-sm-4">
                     <label class="form-label">Quantity</label>
-                    <input class="form-control" asp-for="InvoiceDto.Quantity" id="quatityInput" oninput="updateTotalPrice()">
-                    <span asp-validation-for="InvoiceDto.Quantity" class="text-danger"></span>
+                    <input class="form-control" asp-for="InvoiceItemDto.Quantity" id="quatityInput" oninput="updateTotalPrice()">
+                    <span asp-validation-for="InvoiceItemDto.Quantity" class="text-danger"></span>
                 </div>
 
                 <div class="col-lg-2 col-sm-4">
                     <label class="form-label">Unit Price</label>
-                    <input class="form-control" asp-for="InvoiceDto.UnitPrice" id="unitPriceInput" oninput="updateTotalPrice()">
-                    <span asp-validation-for="InvoiceDto.UnitPrice" class="text-danger"></span>
+                    <input class="form-control" asp-for="InvoiceItemDto.UnitPrice" id="unitPriceInput" oninput="updateTotalPrice()">
+                    <span asp-validation-for="InvoiceItemDto.UnitPrice" class="text-danger"></span>
                 </div>
 
                 <div class="col-lg-2 col-sm-4">

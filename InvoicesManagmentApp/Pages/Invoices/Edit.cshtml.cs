@@ -2,6 +2,7 @@ using InvoicesManagmentApp.Models;
 using InvoicesManagmentApp.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 
 namespace InvoicesManagmentApp.Pages.Invoices
 {
@@ -9,6 +10,9 @@ namespace InvoicesManagmentApp.Pages.Invoices
     {
         [BindProperty]
         public InvoiceDto InvoiceDto { get; set; } = new InvoiceDto();
+
+        [BindProperty]
+        public InvoiceItemDto InvoiceItemDto { get; set; } = new();
 
         public Invoice Invoice { get; set; } = new();
 
@@ -23,7 +27,7 @@ namespace InvoicesManagmentApp.Pages.Invoices
 
         public IActionResult OnGet(int id)
         {
-            var invoice = context.Invoices.Find(id);
+            var invoice = context.Invoices.Include(i => i.InvoiceItems).FirstOrDefault(i => i.Id == id);
             if (invoice == null)
             {
                 return RedirectToPage("/Invoices/Index");
@@ -35,10 +39,6 @@ namespace InvoicesManagmentApp.Pages.Invoices
             InvoiceDto.Status = invoice.Status;
             InvoiceDto.IssueDate = invoice.IssueDate;
             InvoiceDto.DueDate = invoice.DueDate;
-
-            InvoiceDto.Service = invoice.Service;
-            InvoiceDto.UnitPrice = invoice.UnitPrice;
-            InvoiceDto.Quantity = invoice.Quantity;
 
             InvoiceDto.ClientName = invoice.ClientName;
             InvoiceDto.Email = invoice.Email;
@@ -53,13 +53,19 @@ namespace InvoicesManagmentApp.Pages.Invoices
 
         public IActionResult OnPost(int id)
         {
-            var invoice = context.Invoices.Find(id);
+            var invoice = context.Invoices.Include(i => i.InvoiceItems).FirstOrDefault(i => i.Id == id);
             if (invoice == null)
             {
                 return RedirectToPage("/Invoices/Index");
             }
 
             Invoice = invoice;
+
+
+
+            ModelState.Remove(nameof(InvoiceItemDto.Service));
+            ModelState.Remove(nameof(InvoiceItemDto.Quantity));
+            ModelState.Remove(nameof(InvoiceItemDto.UnitPrice));
 
             if (!ModelState.IsValid)
             {
@@ -72,10 +78,6 @@ namespace InvoicesManagmentApp.Pages.Invoices
             invoice.IssueDate = InvoiceDto.IssueDate;
             invoice.DueDate = InvoiceDto.DueDate;
 
-            invoice.Service = InvoiceDto.Service;
-            invoice.UnitPrice = InvoiceDto.UnitPrice;
-            invoice.Quantity = InvoiceDto.Quantity;
-
             invoice.ClientName = InvoiceDto.ClientName;
             invoice.Email = InvoiceDto.Email;
             invoice.Phone = InvoiceDto.Phone;
@@ -86,6 +88,50 @@ namespace InvoicesManagmentApp.Pages.Invoices
             successMessage = "Invoice Updated Successfully!";
 
             return Page();
+        }
+
+
+
+        public IActionResult OnPostCreateItem(int id)
+        {
+            var invoice = context.Invoices.Include(i => i.InvoiceItems).FirstOrDefault(i => i.Id == id);
+            if (invoice == null)
+            {
+                return RedirectToPage("/Invoices/Index");
+            }
+
+            if (string.IsNullOrEmpty(InvoiceItemDto.Service) || InvoiceItemDto.Quantity <= 0 || InvoiceItemDto.UnitPrice <= 0)
+            {
+                // submitted Item is not valid
+                TempData["ErrorMessage"] = "Submitted Item is not valid!";
+                return RedirectToPage("/Invoices/Edit", new { id });
+            }
+
+            var invoiceItem = new InvoiceItem
+            {
+                Service = InvoiceItemDto.Service,
+                Quantity = InvoiceItemDto.Quantity,
+                UnitPrice = InvoiceItemDto.UnitPrice,
+            };
+
+            invoice.InvoiceItems.Add(invoiceItem);
+            context.SaveChanges();
+
+            return RedirectToPage("/Invoices/Edit", new { id });
+        }
+
+
+
+        public IActionResult OnGetDeleteItem(int invoiceId, int itemId)
+        {
+            var item = context.InvoiceItems.Find(itemId);
+            if (item != null)
+            {
+                context.InvoiceItems.Remove(item);
+                context.SaveChanges();
+            }
+
+            return RedirectToPage("/Invoices/Edit", new { id = invoiceId });
         }
     }
 }
