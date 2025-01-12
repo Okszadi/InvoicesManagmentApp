@@ -21,7 +21,7 @@ This program provides a comprehensive solution for managing invoices, allowing u
 
 ## Screenshoots
 * Welcome screen:
-![Welcome screen](/screenshoots/welcome-screenshoot.jpg?raw=true "Welcome screen")
+![Welcome screen](/screenshoots/welcome-screenshoot?raw=true "Welcome screen")
 * Invoice list:
 ![Invoice list](/screenshoots/invoices_list-screenshoot.jpg?raw=true "Invoice list")
 * Invoice list search:
