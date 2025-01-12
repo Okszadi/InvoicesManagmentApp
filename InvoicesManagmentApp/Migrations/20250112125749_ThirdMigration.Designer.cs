@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InvoicesManagmentApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250109213439_SecondMigration")]
-    partial class SecondMigration
+    [Migration("20250112125749_ThirdMigration")]
+    partial class ThirdMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -99,11 +99,13 @@ namespace InvoicesManagmentApp.Migrations
 
             modelBuilder.Entity("InvoicesManagmentApp.Models.InvoiceItem", b =>
                 {
-                    b.HasOne("InvoicesManagmentApp.Models.Invoice", null)
+                    b.HasOne("InvoicesManagmentApp.Models.Invoice", "Invoice")
                         .WithMany("InvoiceItems")
                         .HasForeignKey("InvoiceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Invoice");
                 });
 
             modelBuilder.Entity("InvoicesManagmentApp.Models.Invoice", b =>

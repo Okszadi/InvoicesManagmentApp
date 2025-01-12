@@ -7,7 +7,7 @@ namespace InvoicesManagmentApp.Models
         [Required]
         public string Number { get; set; } = "";
         [Required]
-        public string Status { get; set; } = ""; // Paid or Pending
+        public string Status { get; set; } = ""; // Paid, Pending or Overdue
         public DateOnly? IssueDate { get; set; }
         public DateOnly? DueDate { get; set; }
 

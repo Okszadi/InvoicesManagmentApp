@@ -46,11 +46,11 @@ namespace InvoicesManagmentApp.Pages.Invoices
                 Status = InvoiceDto.Status,
                 IssueDate = InvoiceDto.IssueDate,
                 DueDate = InvoiceDto.DueDate,
-
                 ClientName = InvoiceDto.ClientName,
                 Email = InvoiceDto.Email,
                 Phone = InvoiceDto.Phone,
                 Address = InvoiceDto.Address,
+                InvoiceItems = new List<InvoiceItem>() // Initialize the collection
             };
 
             invoice.InvoiceItems.Add(invoiceItem);

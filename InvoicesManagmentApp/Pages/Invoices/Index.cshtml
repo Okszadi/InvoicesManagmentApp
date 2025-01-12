@@ -35,11 +35,15 @@
                 <td>
                     @if (invoice.Status == "Pending")
                     {
-                        <span class="badge text-bg-warning">@invoice.Status</span>
+                        <span class="badge bg-warning text-white">@invoice.Status</span>
                     }
                     else if (invoice.Status == "Paid")
                     {
-                        <span class="badge text-bg-success">@invoice.Status</span>
+                        <span class="badge bg-success text-white">@invoice.Status</span>
+                    }
+                    else if (invoice.Status == "Overdue")
+                    {
+                        <span class="badge bg-danger text-white">@invoice.Status</span>
                     }
                     else
                     {
